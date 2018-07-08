@@ -2,13 +2,13 @@
 #include "common.h"
 #include "seqlist.h"
 
-int input(SeqList *L) {
+int input(SeqList *L) 
+{
 	int p,q,r;
 	int i,j;
 	printf("请输入选手的数量:");
 	scanf("%d",&r);
 	L->last = r-1;
-
 	printf("请输入姓名，编号，节目名称，节目类别，班级，成绩:\n");
 	for(i=0; i<=L->last; i++) {
 		L->elem[i].max=0;
@@ -119,14 +119,16 @@ int fun3(SeqList L,int s) {
 		}
 	}
 }
-int check(SeqList *L) {
+int check(SeqList *L) 
+{
 	int p,q;
 	p=fun3(*L,q);
 	if(p == -1)
 		printf("在此线性表中没有该元素!\n");
 	return 0;
 }
-int output(SeqList *L) {
+int output(SeqList *L) 
+{
 	int i,j;
 	for(i=0; i<=L->last; i++) {
 		printf("姓名 ：%s ",L->elem[i].name);
@@ -139,14 +141,15 @@ int output(SeqList *L) {
 			printf("%.2f   ",L->elem[i].grades[j]);
 		}
 		printf("\n总成绩：%.2f ",L->elem[i].sum);
-		printf("平均成绩：%f 最高分：%f 最低分：%f\n ",L->elem[i].ave,L->elem[i].max,L->elem[i].min);
+		printf("平均成绩：%.2f 最高分：%.2f 最低分：%.2f\n ",L->elem[i].ave,L->elem[i].max,L->elem[i].min);
 	}
 
 
 	return 0;
 }
 
-int outputj(SeqList *L) {
+int outputj(SeqList *L) 
+{
 	int i;
 	for(i=0; i<=L->last2; i++) {
 		printf("姓名 ：%s ",L->elem2[i].rname);
@@ -156,7 +159,8 @@ int outputj(SeqList *L) {
 	return 0;
 }
 
-int  Delete(SeqList* L) {
+int  Delete(SeqList* L) 
+{
 	ElemType x;
 	int i;
 	int p,q;
@@ -180,7 +184,8 @@ int  Delete(SeqList* L) {
 
 
 
-int Insert(SeqList *L) {
+int Insert(SeqList *L) 
+{
 	ElemType x;
 	int i,j,s;
 	int q,p;
@@ -229,24 +234,63 @@ int Insert(SeqList *L) {
 
 void save(SeqList *L) { /*保存文件*/
 	FILE *fp;
-	FILE *temp;
+	FILE *fq;
 	int i,j;                                /*定义指针 打开文件  */
-	fp=fopen("student-data.csv","a+");
+	fp=fopen("选手信息.csv","a+");
 	if(fp==NULL) {
 		printf("open file error.\n");
 		//return -1;
 		exit(-1);
-	} else { //把数组中的数据逐个写入student.csv。   请输入姓名，编号，节目名称，节目类别，班级，成绩
+	} 
+	else 
+	{ //把数组中的数据逐个写入student.csv。   请输入姓名，编号，节目名称，节目类别，班级，成绩
+	    fprintf(fp,"电话 ,姓名 ,性别 ,表演名称 ,表演类别 ,分数 ,2 ,3 ,4 ,5 ,6 ,7 ,8 ,9 ,10 ,最后得分\n");
 		for(i=0; i<=L->last; i++) {
 			fprintf(fp,"%s,%d,%s,%s,%d,",L->elem[i].name,L->elem[i].num,L->elem[i].jmname,L->elem[i].lei,L->elem[i].clas);
-			for(j=0; j<=L->last2; j++) {
-				fprintf(fp,"%.2f\n",L->elem[i].grades[j]);
+			for(j=0; j<10; j++) {
+				fprintf(fp,"%.2f,",L->elem[i].grades[j]);
 			}
-
+			fprintf(fp,"%.2f\n",L->elem[i].ave);
 		}
 		printf("保存成功！\n");
 
 	}
+	fq=fopen("选手信息.txt","a+");
+	if(fq==NULL) {
+		printf("open file error.\n");
+		//return -1;
+		exit(-1);
+	} 
+	else 
+	{ //把数组中的数据逐个写入student.txt。   请输入姓名，编号，节目名称，节目类别，班级，成绩
+	    fprintf(fq,"电话 姓名 性别 表演名称 表演类别 分数 2 3 4 5 6 7 8 9 最后得分\n");
+		for(i=0; i<=L->last; i++) {
+			fprintf(fq,"%s %d %s %s %d ",L->elem[i].name,L->elem[i].num,L->elem[i].jmname,L->elem[i].lei,L->elem[i].clas);
+			for(j=0; j<=L->last2; j++) {
+				fprintf(fq,"%.2f,",L->elem[i].grades[j]);
+			}
+			fprintf(fq,"%.2f\n",L->elem[i].ave);
+		}
+		printf("保存成功！\n");
+
+	}
+	
+	fp=fopen("裁判信息.csv","a+");
+	if(fp==NULL) {
+		printf("open file error.\n");
+		//return -1;
+		exit(-1);
+	} 
+	else 
+	{ //把数组中的数据逐个写入裁判.csv。   
+	    fprintf(fp,"电话,姓名,性别\n");
+		for(i=0; i<=L->last2; i++) {
+			fprintf(fp,"%s,%d,%s\n",L->elem2[i].rname,L->elem2[i].rnum,L->elem2[i].sex);
+		}
+		printf("保存成功！\n");
+
+	}
+	fclose(fq);
 	fclose(fp);		/*关闭文件*/
 
 }
@@ -254,12 +298,9 @@ void read(SeqList *L)  //文件读取
 {
 
 	FILE *fp;
-	FILE *fp2;
 	int i,j;
-	ElemType temp[50];
-
-	fp=fopen("student-data.csv","r");   //定义指针 打开文件
-	fp2=fopen("input.csv","w+");
+	char s[1000];
+	fp=fopen("选手信息.txt","w+"); 
 	if(fp==NULL)
 	{
 		printf("open file error.\n");
@@ -268,31 +309,30 @@ void read(SeqList *L)  //文件读取
 	}
 	else
 	{
-		fprintf(fp2,"姓名  ,编号  ,节目名称  ,节目类别  ,班级 , 分数   \n");
-		printf("read data from student-data:\n");
-		i=0;
-		while(fscanf(fp,"%s %d %s %s %d\n",L->elem[i].name,&L->elem[i].num,L->elem[i].jmname,L->elem[i].lei,&L->elem[i].clas)!=EOF)
-		{
-
-			printf("%s %d %s %s %d\n",L->elem[i].name,L->elem[i].num,L->elem[i].jmname,L->elem[i].lei,L->elem[i].clas);
-			fprintf(fp2,"%s %d %s %s %d\n",L->elem[i].name,L->elem[i].num,L->elem[i].jmname,L->elem[i].lei,L->elem[i].clas);
-			i++;
-		}
-		for(i=0; i<=L->last; i++) {
-		  for(j=0; j<=L->last2; j++) {
-			L->elem[i].sum=L->elem[i].grades[j]+L->elem[i].sum;
-			if(L->elem[i].max<L->elem[i].grades[j])
-				L->elem[i].max=L->elem[i].grades[j];
-			if(L->elem[i].min>L->elem[i].grades[j])
-				L->elem[i].min=L->elem[i].grades[j];
-		}
-	}
-		L->last=i-1;
-
-	}
-
-	fclose(fp);
+		fgets(s,1000,fp);
+        i=0;
+		printf("read data from 选手信息.txt:\n");
+	    while(!feof(fp))
+	    {
+	    	fscanf(fp,"%s %d %s %s %d ",L->elem[i].name,&L->elem[i].num,L->elem[i].jmname,L->elem[i].lei,&L->elem[i].clas);
+	    	for(j=0; j<=L->last2; j++) 
+			{
+	    		fscanf(fp,"%.2f ",&L->elem[i].grades[j]);
+			    L->elem[i].sum=L->elem[i].grades[j]+L->elem[i].sum;
+			    if(L->elem[i].max<L->elem[i].grades[j])
+				    L->elem[i].max=L->elem[i].grades[j];
+			    if(L->elem[i].min>L->elem[i].grades[j])
+				    L->elem[i].min=L->elem[i].grades[j];
+		    }
+		    fscanf(fp,"%.2f\n",&L->elem[i].ave);
+		    i++;
+		}		
+        printf("last=%d\n",L->last);
+        printf("学生信息读取成功！\n");
+	    fclose(fp);
 }
+}
+
 
 
 
@@ -311,7 +351,7 @@ void menu() {
 		printf("--------------6.查找选手信息-----------------\n");
 		printf("--------------7 排序选手成绩-----------------\n");
 		printf("--------------8.选手文件读取-----------------\n");
-		printf("--------------9.选手文件保存-----------------\n");
+		printf("--------------9.选手裁判保存-----------------\n");
 		printf("------------------0.退出---------------------\n");
 		printf("--------------10.输出裁判信息-----------------\n");
 
@@ -340,7 +380,9 @@ void menu() {
 			case 7:
 				fun4(&L);
 				break;
-				//	case 8:  read(&L);break;
+			case 8: 
+			    read(&L);
+			    break;
 			case 9:
 				save(&L);
 				break;
